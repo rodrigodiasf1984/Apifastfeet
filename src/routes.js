@@ -16,9 +16,9 @@ import adminMidlleware from './app/middlewares/AdminUser';
 
 const routes = new Router();
 const upload = multer(multerConfig);
-//Rota para listar problema de uma entrega especifíca
-routes.get('/delivery/:id/problems',DeliveryProblemController.show)
-//Rota para mostrar um Deliveryman
+// Rota para listar problema de uma entrega especifíca
+routes.get('/delivery/:id/problems', DeliveryProblemController.show);
+// Rota para mostrar um Deliveryman
 routes.get('/deliverymans/:id', DeliverymanController.show);
 // Rota para listar entregas do Deliveryman
 routes.get('/deliveryman/:id/deliveries', ShowDeliveriesController.index);
@@ -48,12 +48,8 @@ routes.put('/users', UserController.update);
 routes.post('/recipients', adminMidlleware, RecipientController.store);
 // Rota para atualizar o destinatário
 routes.put('/recipients/:id', adminMidlleware, RecipientController.update);
-//Rota para apagar um destinatário
-routes.delete(
-  '/recipients/:id',
-  adminMidlleware,
-  RecipientController.delete
-);
+// Rota para apagar um destinatário
+routes.delete('/recipients/:id', adminMidlleware, RecipientController.delete);
 // rota para listar todos os destinatários
 routes.get('/recipients', RecipientController.index);
 // Rota para fazer o upload od avatar do entregador

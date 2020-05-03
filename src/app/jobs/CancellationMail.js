@@ -7,7 +7,7 @@ class CancellationMail {
 
   async handle({ data }) {
     const { deliveryWithProblem } = data;
-    console.log(deliveryWithProblem, 'Problem');
+    // console.log(deliveryWithProblem, 'Problem');
     Mail.sendMail({
       to: `${deliveryWithProblem.delivery.deliveryman.name}<${deliveryWithProblem.delivery.deliveryman.email}>`,
       subject: 'Entrega Cancelada',
