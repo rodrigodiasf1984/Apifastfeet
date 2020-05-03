@@ -16,6 +16,7 @@ import adminMidlleware from './app/middlewares/AdminUser';
 
 const routes = new Router();
 const upload = multer(multerConfig);
+routes.get('/', (req, res) => res.send('ok'));
 // Rota para listar problema de uma entrega especifíca
 routes.get('/delivery/:id/problems', DeliveryProblemController.show);
 // Rota para mostrar um Deliveryman
