@@ -15,6 +15,7 @@ import authMidlleware from './app/middlewares/AuthMiddleware';
 import adminMidlleware from './app/middlewares/AdminUser';
 
 import validateUserStore from './app/validators/UserStore';
+import validateUserUpdate from './app/validators/UserUpdate';
 
 const routes = new Router();
 const upload = multer(multerConfig);
@@ -46,7 +47,7 @@ routes.post('/sessions', SessionController.store);
 // Usa o authMiddleware globalmente para as rotas posteriores "se o user não estiver logado o mesmo não consegue acessar as rotas abaixo"
 routes.use(authMidlleware);
 // Rota para update do user
-routes.put('/users', UserController.update);
+routes.put('/users', validateUserUpdate, UserController.update);
 // Rota para criar novo destinatário
 routes.post('/recipients', adminMidlleware, RecipientController.store);
 // Rota para atualizar o destinatário
