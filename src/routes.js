@@ -14,6 +14,8 @@ import DeliveryProblemController from './app/controllers/DeliveryProblemControll
 import authMidlleware from './app/middlewares/AuthMiddleware';
 import adminMidlleware from './app/middlewares/AdminUser';
 
+import validateUserStore from './app/validators/UserStore';
+
 const routes = new Router();
 const upload = multer(multerConfig);
 routes.get('/', (req, res) => res.send('ok'));
@@ -37,7 +39,7 @@ routes.put(
 // Rota para criar um problema referente a entrega
 routes.post('/delivery/:delivery_id/problems', DeliveryProblemController.store);
 // Rota para criação do utilizador, usando o método store dentro do UserController
-routes.post('/users', UserController.store);
+routes.post('/users', validateUserStore, UserController.store);
 // Rota para login
 routes.post('/sessions', SessionController.store);
 
