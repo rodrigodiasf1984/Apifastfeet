@@ -16,6 +16,7 @@ import adminMidlleware from './app/middlewares/AdminUser';
 
 import validateUserStore from './app/validators/UserStore';
 import validateUserUpdate from './app/validators/UserUpdate';
+import validateSessionStore from './app/validators/SessionStore';
 
 const routes = new Router();
 const upload = multer(multerConfig);
@@ -42,7 +43,7 @@ routes.post('/delivery/:delivery_id/problems', DeliveryProblemController.store);
 // Rota para criação do utilizador, usando o método store dentro do UserController
 routes.post('/users', validateUserStore, UserController.store);
 // Rota para login
-routes.post('/sessions', SessionController.store);
+routes.post('/sessions', validateSessionStore, SessionController.store);
 
 // Usa o authMiddleware globalmente para as rotas posteriores "se o user não estiver logado o mesmo não consegue acessar as rotas abaixo"
 routes.use(authMidlleware);
