@@ -62,6 +62,7 @@ class DeliveryController {
 
   async update(req, res) {
     const {
+      product,
       deliveryman_id,
       recipient_id,
       signature_id,
@@ -72,6 +73,7 @@ class DeliveryController {
     const { id } = req.params;
 
     const deliveryUpdated = await UpdateDeliveryService.run({
+      product,
       deliveryman_id,
       recipient_id,
       signature_id,

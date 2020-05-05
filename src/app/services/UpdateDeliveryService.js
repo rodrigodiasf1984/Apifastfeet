@@ -6,6 +6,7 @@ import Delivery from '../models/Delivery';
 
 class UpdateDeliveryService {
   async run({
+    product,
     delivery_id,
     deliveryman_id,
     recipient_id,
@@ -75,6 +76,7 @@ class UpdateDeliveryService {
     }
 
     const deliveryUpdated = await delivery.update(
+      product,
       delivery_id,
       (deliveryman_id = deliveryman.id),
       recipient_id,
