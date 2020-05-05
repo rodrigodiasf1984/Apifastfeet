@@ -21,6 +21,8 @@ import validateShowDeliveriesIndex from './app/validators/ShowDeliveriesIndex';
 import validateRecipientStore from './app/validators/RecipientStore';
 import validateRecipientUpdate from './app/validators/RecipientUpdate';
 import validateRecipientDelete from './app/validators/RecipientDelete';
+import validatePickUpDelivery from './app/validators/PickUpDeliveryUpdate';
+import validateDeliveryStatusUpdate from './app/validators/DeliveryStatusUpdate';
 
 const routes = new Router();
 const upload = multer(multerConfig);
@@ -38,11 +40,13 @@ routes.get(
 routes.put(
   '/deliveryman/:deliveryman_id/deliveries_status/:delivery_id',
   upload.single('file'),
+  validateDeliveryStatusUpdate,
   DeliveryStatusController.update
 );
 // Rota para retirar entregas => max 5 por dia
 routes.put(
   '/deliveryman/:deliveryman_id/deliveries/:delivery_id',
+  validatePickUpDelivery,
   PickUpDeliveryController.update
 );
 // Rota para criar um problema referente a entrega

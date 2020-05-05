@@ -1,4 +1,3 @@
-import * as Yup from 'yup';
 import { parseISO, getHours, startOfDay, endOfDay, isBefore } from 'date-fns';
 import { Op } from 'sequelize';
 import Delivery from '../models/Delivery';
@@ -6,24 +5,6 @@ import Deliveryman from '../models/Deliveryman';
 
 class PickUpDeliveryController {
   async update(req, res) {
-    const schema = Yup.object().shape({
-      start_date: Yup.string().required(),
-    });
-    const schemaParamd = Yup.object(req.params).shape({
-      deliveryman_id: Yup.number()
-        .positive()
-        .required(),
-      delivery_id: Yup.number()
-        .positive()
-        .required(),
-    });
-    if (
-      !(await schema.isValid(req.body)) ||
-      !(await schemaParamd.isValid(req.params))
-    ) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
-
     const { deliveryman_id, delivery_id } = req.params;
     const deliveryman = await Deliveryman.findByPk(deliveryman_id);
     if (!deliveryman) {
@@ -46,7 +27,7 @@ class PickUpDeliveryController {
         .status(400)
         .json({ error: "You can't pick up this delivery!" });
     }
-    const date= new Date();
+    const date = new Date();
     const { start_date } = req.body; // a data que vem do corpo da requição vem no formato de uma string
     const parsedStartDate = parseISO(start_date); // por este motivo temos que converter para data
 

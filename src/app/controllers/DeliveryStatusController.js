@@ -1,4 +1,3 @@
-import * as Yup from 'yup';
 import File from '../models/File';
 import Delivery from '../models/Delivery';
 import Deliveryman from '../models/Deliveryman';
@@ -6,26 +5,6 @@ import Deliveryman from '../models/Deliveryman';
 class DeliveryStatusController {
   // Entrega da encomenda
   async update(req, res) {
-    // const schema = Yup.object().shape({
-    //   end_date: Yup.string().required(),
-    // });
-
-    const schemaParamd = Yup.object(req.params).shape({
-      deliveryman_id: Yup.number()
-        .positive()
-        .required(),
-      delivery_id: Yup.number()
-        .positive()
-        .required(),
-    });
-
-    // await schema.validate(req.query).catch(function(err) {
-    //   return res.status(400).json(`{${err.name} : ${err.errors} }`);
-    // });
-    await schemaParamd.isValid(req.params).catch(function(err) {
-      return res.status(400).json(`{${err.name} : ${err.errors} }`);
-    });
-
     const { deliveryman_id, delivery_id } = req.params;
     const delivery = await Delivery.findByPk(delivery_id);
     if (!delivery.start_date) {
@@ -38,7 +17,6 @@ class DeliveryStatusController {
     if (!deliveryman) {
       return res.status(400).json({ error: 'Deliveryman does not exists.' });
     }
-
 
     if (!delivery) {
       return res.status(400).json({ error: 'Delivery does not exists' });
@@ -63,7 +41,7 @@ class DeliveryStatusController {
       path,
     });
     const deliveryUpdated = await delivery.update({
-      end_date:new Date,
+      end_date: new Date(),
       signature_id: file.id,
     });
 
