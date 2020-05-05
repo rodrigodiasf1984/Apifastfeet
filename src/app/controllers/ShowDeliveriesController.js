@@ -1,4 +1,3 @@
-import * as Yup from 'yup';
 import { Op } from 'sequelize';
 import Delivery from '../models/Delivery';
 import Deliveryman from '../models/Deliveryman';
@@ -7,14 +6,6 @@ import File from '../models/File';
 
 class ShowDeliveriesController {
   async index(req, res) {
-    const schemaParamd = Yup.object(req.params).shape({
-      id: Yup.number()
-        .positive()
-        .required(),
-    });
-    if (!(await schemaParamd.isValid(req.params))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
     const { id } = req.params;
     const deliveryman = await Deliveryman.findByPk(id);
     if (!deliveryman) {
@@ -30,7 +21,14 @@ class ShowDeliveriesController {
         end_date: filter === 'true' ? { [Op.ne]: null } : null,
       },
       order: ['created_at'],
-      attributes: ['id', 'product', 'start_date', 'end_date', 'canceled_at', 'createdAt'],
+      attributes: [
+        'id',
+        'product',
+        'start_date',
+        'end_date',
+        'canceled_at',
+        'createdAt',
+      ],
       limit: 9, // lista somente 9 resultados
       offset: (page - 1) * 9, // serve para determina quantos registos eu quero pular
       include: [
@@ -69,7 +67,7 @@ class ShowDeliveriesController {
       ],
     });
 
-    return res.json( deliveries );
+    return res.json(deliveries);
   }
 }
 

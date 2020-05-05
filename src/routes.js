@@ -17,16 +17,20 @@ import adminMidlleware from './app/middlewares/AdminUser';
 import validateUserStore from './app/validators/UserStore';
 import validateUserUpdate from './app/validators/UserUpdate';
 import validateSessionStore from './app/validators/SessionStore';
+import validateShowDeliveriesIndex from './app/validators/ShowDeliveriesIndex';
 
 const routes = new Router();
 const upload = multer(multerConfig);
-routes.get('/', (req, res) => res.send('ok'));
 // Rota para listar problema de uma entrega especifíca
 routes.get('/delivery/:id/problems', DeliveryProblemController.show);
 // Rota para mostrar um Deliveryman
 routes.get('/deliverymans/:id', DeliverymanController.show);
 // Rota para listar entregas do Deliveryman
-routes.get('/deliveryman/:id/deliveries', ShowDeliveriesController.index);
+routes.get(
+  '/deliveryman/:id/deliveries',
+  validateShowDeliveriesIndex,
+  ShowDeliveriesController.index
+);
 // Rota para finalizar a entrega
 routes.put(
   '/deliveryman/:deliveryman_id/deliveries_status/:delivery_id',
