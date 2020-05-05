@@ -70,13 +70,14 @@ class UpdateDeliveryService {
       }
     }
 
-    await delivery.update(
+    const deliveryUpdate = await delivery.update(
       deliveryman_id,
       recipient_id,
       signature_id,
       start_date,
       end_date
     );
+    return deliveryUpdate;
   }
 }
 
