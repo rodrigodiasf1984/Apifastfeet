@@ -26,6 +26,10 @@ import validateDeliveryStatusUpdate from './app/validators/DeliveryStatusUpdate'
 import validateDeliveryProblemDelete from './app/validators/DeliveryProblemDelete';
 import validateDeliveryProblemStore from './app/validators/DeliveryProblemStore';
 import validateDeliveryProblemShow from './app/validators/DeliveryProblemShow';
+import validateDeliverymanStore from './app/validators/DeliverymanStore';
+import validateDeliverymanUpdate from './app/validators/DeliverymanUpdate';
+import validateDeliverymanDelete from './app/validators/DeliverymanDelete';
+import validateDeliverymanShow from './app/validators/DeliverymanShow';
 
 const routes = new Router();
 const upload = multer(multerConfig);
@@ -36,7 +40,11 @@ routes.get(
   DeliveryProblemController.show
 );
 // Rota para mostrar um Deliveryman
-routes.get('/deliverymans/:id', DeliverymanController.show);
+routes.get(
+  '/deliverymans/:id',
+  validateDeliverymanShow,
+  DeliverymanController.show
+);
 // Rota para listar entregas do Deliveryman
 routes.get(
   '/deliveryman/:id/deliveries',
@@ -97,15 +105,26 @@ routes.get('/recipients', RecipientController.index);
 // Rota para fazer o upload od avatar do entregador
 routes.post('/files', upload.single('file'), FileController.store);
 // Rota para cadastrar entregadores
-routes.post('/deliverymans', adminMidlleware, DeliverymanController.store);
+routes.post(
+  '/deliverymans',
+  adminMidlleware,
+  validateDeliverymanStore,
+  DeliverymanController.store
+);
 // Rota para update dos entregadores
-routes.put('/deliverymans/:id', adminMidlleware, DeliverymanController.update);
+routes.put(
+  '/deliverymans/:id',
+  adminMidlleware,
+  validateDeliverymanUpdate,
+  DeliverymanController.update
+);
 // Rota para listar todos os entregadores
 routes.get('/deliverymans', adminMidlleware, DeliverymanController.index);
 // Rota para apagar um entregador
 routes.delete(
   '/deliverymans/:id',
   adminMidlleware,
+  validateDeliverymanDelete,
   DeliverymanController.delete
 );
 // Rota para criar uma entrega Admin

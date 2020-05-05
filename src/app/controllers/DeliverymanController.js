@@ -1,4 +1,3 @@
-import * as Yup from 'yup';
 import { Op } from 'sequelize';
 import Deliveryman from '../models/Deliveryman';
 import File from '../models/File';
@@ -50,17 +49,6 @@ class DeliverymanController {
   }
 
   async store(req, res) {
-    const schema = Yup.object().shape({
-      avatar_id: Yup.number(),
-      name: Yup.string().required(),
-      email: Yup.string()
-        .email()
-        .required(),
-    });
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
-
     const deliverymanExist = await Deliveryman.findOne({
       where: { email: req.body.email },
     });
@@ -79,24 +67,6 @@ class DeliverymanController {
   }
 
   async update(req, res) {
-    const schema = Yup.object().shape({
-      name: Yup.string(),
-      email: Yup.string().email(),
-      avatar_id: Yup.number().positive(),
-    });
-
-    const schemaParamd = Yup.object(req.params).shape({
-      id: Yup.number()
-        .positive()
-        .required(),
-    });
-    if (
-      !(await schema.isValid(req.body)) ||
-      !(await schemaParamd.isValid(req.params))
-    ) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
-
     const { id } = req.params;
     const { email, avatar_id } = req.body;
 
@@ -134,15 +104,6 @@ class DeliverymanController {
   }
 
   async delete(req, res) {
-    const schemaParam = Yup.object(req.params).shape({
-      id: Yup.number()
-        .positive()
-        .required(),
-    });
-
-    if (!(await schemaParam.isValid(req.params))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
     const deliveryman = await Deliveryman.findByPk(req.params.id);
     if (!deliveryman) {
       return res.status(400).json({ error: 'Deliveryman does not exists.' });
