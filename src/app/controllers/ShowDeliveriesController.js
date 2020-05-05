@@ -3,6 +3,7 @@ import Delivery from '../models/Delivery';
 import Deliveryman from '../models/Deliveryman';
 import Recipient from '../models/Recipient';
 import File from '../models/File';
+import Cache from '../../lib/Cache';
 
 class ShowDeliveriesController {
   async index(req, res) {
@@ -12,6 +13,12 @@ class ShowDeliveriesController {
       return res.status(400).json({ error: 'Deliveryman does not exists.' });
     }
     const { page = 1, filter = 'false' } = req.query; // caso não seja informado o número da página, por padrão será a página 1
+    const cacheKey = `deliveryman:${id}:deliveries:${page}`;
+
+    const cached = await Cache.get(cacheKey);
+    if (cached) {
+      return res.json(cached);
+    }
 
     const deliveries = await Delivery.findAll({
       // se o filtro vier true, retorna somente as encomendas já entregues
@@ -66,6 +73,8 @@ class ShowDeliveriesController {
         },
       ],
     });
+    // guarda em cache somente as entrega do entregador de acordo com o id
+    await Cache.set(cacheKey, deliveries);
 
     return res.json(deliveries);
   }

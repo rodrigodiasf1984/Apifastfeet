@@ -6,6 +6,7 @@ import DeliveryProblem from '../models/Deliveryproblem';
 import File from '../models/File';
 import CancellationMail from '../jobs/CancellationMail';
 import Queue from '../../lib/Queue';
+import Cache from '../../lib/Cache';
 
 class DeliveryProblemController {
   async delete(req, res) {
@@ -80,6 +81,13 @@ class DeliveryProblemController {
     await Queue.add(CancellationMail.key, {
       deliveryWithProblem,
     });
+    /**
+     * Invalidate cache
+     */
+
+    await Cache.invalidatePrefix(
+      `deliveryman:${deliveryWithProblem.deliveryman.id}:deliveries`
+    );
     return res.json(deliveryWithProblem);
   }
 

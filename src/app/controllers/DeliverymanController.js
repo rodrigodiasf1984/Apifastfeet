@@ -8,9 +8,10 @@ class DeliverymanController {
     // paginação, mostra 9 resultados por página
     const { page = 1, q } = req.query; // caso não seja informado o número da página, por padrão será a página 1
     // buscar dentro cached a lista de entregadores caso exista.
-    const cached = await Cache.get('deliverymens');
+    const cached = await Cache.get('deliverymans');
+
     if (cached) {
-      return cached;
+      return res.json(cached);
     }
 
     if (q) {
@@ -39,6 +40,7 @@ class DeliverymanController {
       return res.json(deliverymanbyName);
     }
     // retorna a lista de agendamento do utlizador que fez a requisição
+
     const listDeliverymans = await Deliveryman.findAll({
       attributes: ['id', 'name', 'email'],
       limit: 9, // lista somente 9 resultados
@@ -52,7 +54,7 @@ class DeliverymanController {
       ],
     });
     // guarda o resultado da query dentro do cache
-    await Cache.set('deliverymens', listDeliverymans);
+    await Cache.set('deliverymans', listDeliverymans);
     return res.json(listDeliverymans);
   }
 
@@ -65,7 +67,7 @@ class DeliverymanController {
       return res.status(400).json({ error: 'User already exist!' });
     }
     const { id, name, email, avatar_id } = await Deliveryman.create(req.body);
-
+    await Cache.invalidate('deliverymans');
     return res.json({
       id,
       name,
@@ -102,7 +104,7 @@ class DeliverymanController {
     }
 
     const { name } = await deliveryman.update(req.body);
-
+    await Cache.invalidate('deliverymans');
     return res.json({
       id,
       name,
@@ -118,6 +120,7 @@ class DeliverymanController {
     }
     try {
       await deliveryman.destroy();
+      await Cache.invalidate('deliverymans');
     } catch (error) {
       return res.status(500).json({ message: 'Internal server error' });
     }

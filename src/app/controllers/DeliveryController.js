@@ -6,6 +6,7 @@ import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
 import RegistrationMail from '../jobs/RegistrationMail';
 import Queue from '../../lib/Queue';
+import Cache from '../../lib/Cache';
 
 class DeliveryController {
   async store(req, res) {
@@ -36,6 +37,12 @@ class DeliveryController {
       recipient,
       deliveryman,
     });
+
+    /**
+     * Invalidate cache
+     */
+
+    await Cache.invalidatePrefix(`deliveryman:${deliveryman.id}:deliveries`);
     const { id } = delivery;
     return res.json({
       delivery: {
