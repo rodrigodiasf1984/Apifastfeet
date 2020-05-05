@@ -1,4 +1,3 @@
-import * as Yup from 'yup';
 import { Op } from 'sequelize';
 import Recipient from '../models/Recipient';
 
@@ -30,12 +29,11 @@ class RecipientController {
         offset: (page - 1) * 9, // serve para determina quantos registos eu quero pular
       });
 
-      if(recipientByName.length>0){
+      if (recipientByName.length > 0) {
         return res.json(recipientByName);
       }
-      else{
-        return res.status(400).json("Recipient does not exists");
-      }
+
+      return res.status(400).json('Recipient does not exists');
     }
     // retorna a lista de agendamento do utlizador que fez a requisição
     const listRecipients = await Recipient.findAll({
@@ -57,20 +55,6 @@ class RecipientController {
   }
 
   async store(req, res) {
-    const schema = Yup.object().shape({
-      name: Yup.string().required(),
-      street: Yup.string().required(),
-      street_number: Yup.number().required(),
-      complement: Yup.string(),
-      uf: Yup.string()
-        .required()
-        .max(2),
-      city: Yup.string().required(),
-      postal_code: Yup.string().required(),
-    });
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
     const recipientExists = await Recipient.findOne({
       where: { name: req.body.name },
     });
@@ -104,36 +88,6 @@ class RecipientController {
   }
 
   async update(req, res) {
-    const schema = Yup.object().shape({
-      name: Yup.string(),
-      street: Yup.string().when('postal_code', (postal_code, field) =>
-        postal_code ? field.required() : field
-      ),
-      // verifica se a rua estiver preenchida se sim, torna o campo street_number obrigatório
-      street_number: Yup.string().when('street', (street, field) =>
-        street ? field.required() : field
-      ),
-      complement: Yup.string(),
-      uf: Yup.string()
-        .max(2) // verifica se a cidade estiver preenchida se sim, torna o campo uf obrigatório
-        .when('city', (city, field) => (city ? field.required() : field)),
-      // verifica se o cep estiver preenchido se sim, torna o campo city obrigatório
-      city: Yup.string().when('postal_code', (postal_code, field) =>
-        postal_code ? field.required() : field
-      ),
-      // verifica se a rua estiver preenchido se sim, torna o campo postal_code obrigatório
-      postal_code: Yup.string(),
-    });
-    const schemaParamd = Yup.object(req.params).shape({
-      id: Yup.number().required(),
-    });
-    // verifica se o corpo da requisição foi devidamente preenchido ou se o parâmetro é um número
-    if (
-      !(await schema.isValid(req.body)) ||
-      !(await schemaParamd.isValid(req.params))
-    ) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
     if (!req.params.id) {
       return res.status(400).json({ error: 'Validation fails' });
     }
@@ -173,15 +127,6 @@ class RecipientController {
   }
 
   async delete(req, res) {
-    const schemaParam = Yup.object(req.params).shape({
-      id: Yup.number()
-        .positive()
-        .required(),
-    });
-
-    if (!(await schemaParam.isValid(req.params))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
     const recipient = await Recipient.findByPk(req.params.id);
     if (!recipient) {
       return res.status(400).json({ error: 'Recipient does not exists.' });

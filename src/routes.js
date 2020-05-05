@@ -18,6 +18,9 @@ import validateUserStore from './app/validators/UserStore';
 import validateUserUpdate from './app/validators/UserUpdate';
 import validateSessionStore from './app/validators/SessionStore';
 import validateShowDeliveriesIndex from './app/validators/ShowDeliveriesIndex';
+import validateRecipientStore from './app/validators/RecipientStore';
+import validateRecipientUpdate from './app/validators/RecipientUpdate';
+import validateRecipientDelete from './app/validators/RecipientDelete';
 
 const routes = new Router();
 const upload = multer(multerConfig);
@@ -54,11 +57,26 @@ routes.use(authMidlleware);
 // Rota para update do user
 routes.put('/users', validateUserUpdate, UserController.update);
 // Rota para criar novo destinatário
-routes.post('/recipients', adminMidlleware, RecipientController.store);
+routes.post(
+  '/recipients',
+  adminMidlleware,
+  validateRecipientStore,
+  RecipientController.store
+);
 // Rota para atualizar o destinatário
-routes.put('/recipients/:id', adminMidlleware, RecipientController.update);
+routes.put(
+  '/recipients/:id',
+  adminMidlleware,
+  validateRecipientUpdate,
+  RecipientController.update
+);
 // Rota para apagar um destinatário
-routes.delete('/recipients/:id', adminMidlleware, RecipientController.delete);
+routes.delete(
+  '/recipients/:id',
+  adminMidlleware,
+  validateRecipientDelete,
+  RecipientController.delete
+);
 // rota para listar todos os destinatários
 routes.get('/recipients', RecipientController.index);
 // Rota para fazer o upload od avatar do entregador
