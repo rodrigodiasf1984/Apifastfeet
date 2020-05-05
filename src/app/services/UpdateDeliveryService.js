@@ -2,18 +2,22 @@ import { parseISO, getHours, isBefore } from 'date-fns';
 import Deliveryman from '../models/Deliveryman';
 import Recipient from '../models/Recipient';
 import File from '../models/File';
+import Delivery from '../models/Delivery';
 
 class UpdateDeliveryService {
   async run({
+    delivery_id,
     deliveryman_id,
-    delivery,
     recipient_id,
     signature_id,
     start_date,
     end_date,
   }) {
+    const delivery = await Delivery.findByPk(delivery_id);
+    if (!delivery) throw new Error('Delivery does not exists');
+    let deliveryman = {};
     if (deliveryman_id && deliveryman_id !== delivery.deliveryman_id) {
-      const deliveryman = await Deliveryman.findByPk(deliveryman_id);
+      deliveryman = await Deliveryman.findByPk(deliveryman_id);
       if (!deliveryman) {
         throw new Error('Deliveryman does not exists.');
       }
@@ -70,14 +74,16 @@ class UpdateDeliveryService {
       }
     }
 
-    const deliveryUpdate = await delivery.update(
-      deliveryman_id,
+    const deliveryUpdated = await delivery.update(
+      delivery_id,
+      (deliveryman_id = deliveryman.id),
       recipient_id,
       signature_id,
       start_date,
       end_date
     );
-    return deliveryUpdate;
+
+    return deliveryUpdated;
   }
 }
 

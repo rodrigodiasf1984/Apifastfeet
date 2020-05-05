@@ -61,12 +61,6 @@ class DeliveryController {
   }
 
   async update(req, res) {
-    const { id } = req.params;
-    const delivery = await Delivery.findByPk(id);
-
-    if (!delivery)
-      return res.status(400).json({ error: 'Delivery does not exists' });
-
     const {
       deliveryman_id,
       recipient_id,
@@ -75,12 +69,15 @@ class DeliveryController {
       end_date,
     } = req.body;
 
-    const deliveryUpdated = await UpdateDeliveryService({
+    const { id } = req.params;
+
+    const deliveryUpdated = await UpdateDeliveryService.run({
       deliveryman_id,
       recipient_id,
       signature_id,
       start_date,
       end_date,
+      delivery_id: id,
     });
     return res.json({ deliveryUpdated });
   }
