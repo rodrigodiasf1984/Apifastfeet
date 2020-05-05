@@ -1,4 +1,4 @@
-import * as Yup from 'yup';
+import { Op } from 'sequelize';
 import Delivery from '../models/Delivery';
 import Recipient from '../models/Recipient';
 import Deliveryman from '../models/Deliveryman';
@@ -6,17 +6,9 @@ import DeliveryProblem from '../models/Deliveryproblem';
 import File from '../models/File';
 import CancellationMail from '../jobs/CancellationMail';
 import Queue from '../../lib/Queue';
-import { Op } from 'sequelize';
+
 class DeliveryProblemController {
   async delete(req, res) {
-    const schemaParamd = Yup.object(req.params).shape({
-      delivery_id: Yup.number()
-        .positive()
-        .required(),
-    });
-    if (!(await schemaParamd.isValid(req.params))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
     const { delivery_id } = req.params;
     const deliveryWithProblem = await DeliveryProblem.findOne({
       where: { delivery_id },
@@ -156,21 +148,6 @@ class DeliveryProblemController {
   }
 
   async store(req, res) {
-    const schema = Yup.object().shape({
-      description: Yup.string().required(),
-    });
-
-    const schemaParamd = Yup.object(req.params).shape({
-      delivery_id: Yup.number()
-        .positive()
-        .required(),
-    });
-    if (
-      !(await schema.isValid(req.body)) ||
-      !(await schemaParamd.isValid(req.params))
-    ) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
     const { delivery_id } = req.params;
     const { description } = req.body;
 
@@ -232,16 +209,7 @@ class DeliveryProblemController {
   }
 
   async show(req, res) {
-    // Lista todos os problemas de uma entrega
-
-    const schemaParamd = Yup.object(req.params).shape({
-      id: Yup.number()
-        .positive()
-        .required(),
-    });
-    if (!(await schemaParamd.isValid(req.params))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
+    // Lista todos os problemas de uma entrega(id)
     const { id } = req.params;
     // console.log(id);
     // paginação, mostra 9 resultados por página

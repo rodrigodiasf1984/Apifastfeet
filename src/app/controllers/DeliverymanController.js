@@ -28,7 +28,7 @@ class DeliverymanController {
         ],
       });
 
-      if(deliverymanbyName.length === 0){
+      if (deliverymanbyName.length === 0) {
         return res.status(400).json({ error: 'User does not exist' });
       }
       return res.json(deliverymanbyName);
@@ -51,7 +51,7 @@ class DeliverymanController {
 
   async store(req, res) {
     const schema = Yup.object().shape({
-      avatar_id:Yup.number(),
+      avatar_id: Yup.number(),
       name: Yup.string().required(),
       email: Yup.string()
         .email()
@@ -74,7 +74,7 @@ class DeliverymanController {
       id,
       name,
       email,
-      avatar_id
+      avatar_id,
     });
   }
 
@@ -178,6 +178,5 @@ class DeliverymanController {
 
     return res.json(deliveryman);
   }
-
 }
 export default new DeliverymanController();

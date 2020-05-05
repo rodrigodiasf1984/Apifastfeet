@@ -23,11 +23,18 @@ import validateRecipientUpdate from './app/validators/RecipientUpdate';
 import validateRecipientDelete from './app/validators/RecipientDelete';
 import validatePickUpDelivery from './app/validators/PickUpDeliveryUpdate';
 import validateDeliveryStatusUpdate from './app/validators/DeliveryStatusUpdate';
+import validateDeliveryProblemDelete from './app/validators/DeliveryProblemDelete';
+import validateDeliveryProblemStore from './app/validators/DeliveryProblemStore';
+import validateDeliveryProblemShow from './app/validators/DeliveryProblemShow';
 
 const routes = new Router();
 const upload = multer(multerConfig);
 // Rota para listar problema de uma entrega especifíca
-routes.get('/delivery/:id/problems', DeliveryProblemController.show);
+routes.get(
+  '/delivery/:id/problems',
+  validateDeliveryProblemShow,
+  DeliveryProblemController.show
+);
 // Rota para mostrar um Deliveryman
 routes.get('/deliverymans/:id', DeliverymanController.show);
 // Rota para listar entregas do Deliveryman
@@ -50,7 +57,11 @@ routes.put(
   PickUpDeliveryController.update
 );
 // Rota para criar um problema referente a entrega
-routes.post('/delivery/:delivery_id/problems', DeliveryProblemController.store);
+routes.post(
+  '/delivery/:delivery_id/problems',
+  validateDeliveryProblemStore,
+  DeliveryProblemController.store
+);
 // Rota para criação do utilizador, usando o método store dentro do UserController
 routes.post('/users', validateUserStore, UserController.store);
 // Rota para login
@@ -115,6 +126,7 @@ routes.get(
 routes.delete(
   '/problem/:delivery_id/cancel-delivery',
   adminMidlleware,
+  validateDeliveryProblemDelete,
   DeliveryProblemController.delete
 );
 
