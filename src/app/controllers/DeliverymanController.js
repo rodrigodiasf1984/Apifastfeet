@@ -1,11 +1,17 @@
 import { Op } from 'sequelize';
 import Deliveryman from '../models/Deliveryman';
 import File from '../models/File';
+import Cache from '../../lib/Cache';
 
 class DeliverymanController {
   async index(req, res) {
     // paginação, mostra 9 resultados por página
     const { page = 1, q } = req.query; // caso não seja informado o número da página, por padrão será a página 1
+    // buscar dentro cached a lista de entregadores caso exista.
+    const cached = await Cache.get('deliverymens');
+    if (cached) {
+      return cached;
+    }
 
     if (q) {
       // buscar o deliveryman de acordo com o nome
@@ -45,6 +51,8 @@ class DeliverymanController {
         },
       ],
     });
+    // guarda o resultado da query dentro do cache
+    await Cache.set('deliverymens', listDeliverymans);
     return res.json(listDeliverymans);
   }
 
