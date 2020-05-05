@@ -1,4 +1,3 @@
-import * as Yup from 'yup';
 import { parseISO, getHours, isBefore } from 'date-fns';
 import { Op } from 'sequelize';
 import File from '../models/File';
@@ -10,20 +9,6 @@ import Queue from '../../lib/Queue';
 
 class DeliveryController {
   async store(req, res) {
-    const schema = Yup.object().shape({
-      product: Yup.string().required(),
-      recipient_id: Yup.number()
-        .positive()
-        .required(),
-      deliveryman_id: Yup.number()
-        .positive()
-        .required(),
-    });
-
-    if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
-
     const { product, recipient_id, deliveryman_id } = req.body;
     const deliveryman = await Deliveryman.findByPk(deliveryman_id);
 
@@ -63,15 +48,6 @@ class DeliveryController {
   }
 
   async delete(req, res) {
-    const schemaParam = Yup.object(req.params).shape({
-      id: Yup.number()
-        .positive()
-        .required(),
-    });
-
-    if (!(await schemaParam.isValid(req.params))) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
     const delivery = await Delivery.findByPk(req.params.id);
     if (!delivery) {
       return res.status(400).json({ error: 'Delivery does not exists.' });
@@ -85,24 +61,6 @@ class DeliveryController {
   }
 
   async update(req, res) {
-    const schema = Yup.object().shape({
-      product: Yup.string(),
-      recipient_id: Yup.number().positive(),
-      deliveryman_id: Yup.number().positive(),
-      signature_id: Yup.number().positive(),
-    });
-    const schemaParamd = Yup.object(req.params).shape({
-      id: Yup.number()
-        .positive()
-        .required(),
-    });
-    if (
-      !(await schema.isValid(req.body)) ||
-      !(await schemaParamd.isValid(req.params))
-    ) {
-      return res.status(400).json({ error: 'Validation fails' });
-    }
-
     const { id } = req.params;
     const delivery = await Delivery.findByPk(id);
 
@@ -190,7 +148,7 @@ class DeliveryController {
   async index(req, res) {
     const { page = 1, q } = req.query; // caso não seja informado o número da página, por padrão será a página 1
 
-    if (q !== "") {
+    if (q !== '') {
       // buscar o deliveryman de acordo com o nome
       const deliveryByName = await Delivery.findAll({
         where: {
@@ -217,8 +175,8 @@ class DeliveryController {
             ],
           },
           {
-            model:File,
-            as:'signature',
+            model: File,
+            as: 'signature',
             attributes: ['name', 'path', 'url'],
           },
           {
@@ -238,8 +196,8 @@ class DeliveryController {
         ],
       });
 
-      if(deliveryByName.length===0){
-        return res.status(400).json('Delivery does not exists')
+      if (deliveryByName.length === 0) {
+        return res.status(400).json('Delivery does not exists');
       }
       return res.json(deliveryByName);
     }
@@ -264,8 +222,8 @@ class DeliveryController {
           ],
         },
         {
-          model:File,
-          as:'signature',
+          model: File,
+          as: 'signature',
           attributes: ['name', 'path', 'url'],
         },
         {

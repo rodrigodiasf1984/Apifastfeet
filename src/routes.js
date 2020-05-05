@@ -30,6 +30,9 @@ import validateDeliverymanStore from './app/validators/DeliverymanStore';
 import validateDeliverymanUpdate from './app/validators/DeliverymanUpdate';
 import validateDeliverymanDelete from './app/validators/DeliverymanDelete';
 import validateDeliverymanShow from './app/validators/DeliverymanShow';
+import validateDeliveryStore from './app/validators/DeliveryStore';
+import validateDeliveryUpdate from './app/validators/DeliveryUpdate';
+import validateDeliveryDelete from './app/validators/DeliveryDelete';
 
 const routes = new Router();
 const upload = multer(multerConfig);
@@ -128,11 +131,26 @@ routes.delete(
   DeliverymanController.delete
 );
 // Rota para criar uma entrega Admin
-routes.post('/deliveries', adminMidlleware, DeliveryController.store);
+routes.post(
+  '/deliveries',
+  adminMidlleware,
+  validateDeliveryStore,
+  DeliveryController.store
+);
 // Rota para apagar uma entrega Admin
-routes.delete('/deliveries/:id', adminMidlleware, DeliveryController.delete);
+routes.delete(
+  '/deliveries/:id',
+  adminMidlleware,
+  validateDeliveryDelete,
+  DeliveryController.delete
+);
 // Rota para update de uma entrega Admin
-routes.put('/deliveries/:id', adminMidlleware, DeliveryController.update);
+routes.put(
+  '/deliveries/:id',
+  adminMidlleware,
+  validateDeliveryUpdate,
+  DeliveryController.update
+);
 // Rota para listar todas as encomendas Admin
 routes.get('/deliveries', adminMidlleware, DeliveryController.index);
 // Rota para listar entregas com problems
