@@ -1,4 +1,6 @@
 import { Router } from 'express';
+import Brute from 'express-brute';
+import BruteRedis from 'express-brute-redis';
 import multer from 'multer';
 import multerConfig from './config/multer';
 import UserController from './app/controllers/UserController';
@@ -36,6 +38,12 @@ import validateDeliveryDelete from './app/validators/DeliveryDelete';
 
 const routes = new Router();
 const upload = multer(multerConfig);
+// Segurança no nodeJs
+const bruteStore = new BruteRedis({
+  host: process.env.REDIS_HOST,
+  port: process.env.REDIS_PORT,
+});
+const bruteForce = new Brute(bruteStore);
 // Rota para listar problema de uma entrega especifíca
 routes.get(
   '/delivery/:id/problems',
@@ -76,7 +84,12 @@ routes.post(
 // Rota para criação do utilizador, usando o método store dentro do UserController
 routes.post('/users', validateUserStore, UserController.store);
 // Rota para login
-routes.post('/sessions', validateSessionStore, SessionController.store);
+routes.post(
+  '/sessions',
+  bruteForce.prevent,
+  validateSessionStore,
+  SessionController.store
+);
 
 // Usa o authMiddleware globalmente para as rotas posteriores "se o user não estiver logado o mesmo não consegue acessar as rotas abaixo"
 routes.use(authMidlleware);
